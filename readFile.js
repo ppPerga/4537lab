@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
             res.end(`<h1>${errorMessage}</h1>`);
             return;
         }
-        if(!data) {
+        if(!data || data.trim() === '') {
             data = getString('fileEmpty');
         }
         const contentsLabel = getString('fileContents');
@@ -23,6 +23,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(3001, () => {
+    console.log('Read file server running on http://localhost:3001');
 });
 
 server.on('error', (err) => {

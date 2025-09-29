@@ -26,6 +26,11 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(3002, () => {
+    console.log('Write file server running on http://localhost:3002');
+});
+
+server.on('error', (err) => {
+    console.error('Server error:', err);
 });
 
 server.on('error', (err) => {
