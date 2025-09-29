@@ -11,13 +11,15 @@ const server = http.createServer((req, res) => {
             res.end('<h1>Error reading file</h1>');
             return;
         }
+        if(!data) {
+            data = 'File is empty.';
+        }
         res.end(`<h1>File Contents:</h1><pre>${data}</pre>`);
     });
 
 });
 
 server.listen(3001, () => {
-    console.log('Server running on http://localhost:3001');
 });
 
 server.on('error', (err) => {

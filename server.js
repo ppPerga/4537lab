@@ -21,7 +21,7 @@ const server = http.createServer((req, res) => {
     }
 });
 
-server.listen(3002, () => {
+server.listen(3000, () => {
 });
 
 server.on('error', (err) => {
