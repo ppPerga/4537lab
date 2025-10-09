@@ -1,4 +1,4 @@
-const API_BASE_URL = '/api/definitions';
+const API_BASE_URL = 'http://milescoda.xyz/api/definitions';
 
 // Search for a specific word
 async function searchWord() {
