@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:4000/api/definitions';
+const API_BASE_URL = '/api/definitions';
 
 // Search for a specific word
 async function searchWord() {
