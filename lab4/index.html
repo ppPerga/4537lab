@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary REST API Client</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Dictionary REST API</h1>
+        
+        <div class="section">
+            <h2>Look Up Word</h2>
+            <div class="form-group">
+                <input type="text" id="searchWord" placeholder="Enter word to search">
+                <button onclick="searchWord()">Search</button>
+            </div>
+            <div id="searchResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>Add New Definition</h2>
+            <div class="form-group">
+                <input type="text" id="newWord" placeholder="Word">
+                <input type="text" id="newDefinition" placeholder="Definition">
+                <button onclick="addDefinition()">Add</button>
+            </div>
+            <div id="addResult" class="result"></div>
+        </div>
+
+
+
+        <div class="section">
+            <h2>All Definitions</h2>
+            <button onclick="getAllDefinitions()">Load All Definitions</button>
+            <div id="allDefinitions" class="result"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

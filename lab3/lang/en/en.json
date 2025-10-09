@@ -1,0 +1,6 @@
+{
+  "greeting": "Hello %1, What a beautiful day.",
+  "serverTime": "Server current date and time is",
+  "noName": "Hello! Please add your name to the URL like: ?name=YourName",
+  "currentTime": "Current server time:"
+}
