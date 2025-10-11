@@ -29,8 +29,8 @@ const server = http.createServer((req, res) => {
     
     res.setHeader('Content-Type', 'application/json');
     
-    // Handle API endpoint: /api/definitions
-    if (pathname === '/api/definitions') {
+    // Handle API endpoint: /api/dictionary
+    if (pathname === '/api/dictionary') {
         if (method === 'GET') {
             handleGetRequest(parsedUrl.query, res);
         } else if (method === 'POST') {
