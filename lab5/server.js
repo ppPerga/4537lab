@@ -179,8 +179,14 @@ async function handleApi(req, res, parsedUrl){
 const server = http.createServer(async (req, res) => {
     try{
         const parsedUrl = url.parse(req.url, true);
+
+        // Basic request logging to help debug routing/CORS issues
+        console.log(`[req] ${req.method} ${parsedUrl.pathname} host=${req.headers.host} from=${req.socket.remoteAddress}`);
+        // also log origin header when present
+        if (req.headers.origin) console.log(`      Origin: ${req.headers.origin}`);
+
         // API
-        if (parsedUrl.pathname.startsWith('/api/')){
+        if (parsedUrl.pathname && parsedUrl.pathname.startsWith('/api/')){
             return handleApi(req, res, parsedUrl);
         }
 
