@@ -1,50 +1,43 @@
-const API_BASE_URL = 'https://milescoda.xyz/api/definitions';
-
 // Search for a specific word
 async function searchWord() {
-    const word = document.getElementById('searchWord').value.trim();
-    const resultDiv = document.getElementById('searchResult');
+    const word = document.getElementById(LANG.elementIds.searchWord).value.trim();
+    const resultDiv = document.getElementById(LANG.elementIds.searchResult);
     
     if (!word) {
-        resultDiv.innerHTML = '<p class="error">Please enter a word to search</p>';
+        resultDiv.innerHTML = LANG.templates.errorParagraph(LANG.enterWordError);
         return;
     }
     
     try {
-        const response = await fetch(`${API_BASE_URL}?word=${encodeURIComponent(word)}`);
+        const response = await fetch(`${LANG.apiBaseUrl}?word=${encodeURIComponent(word)}`);
         const data = await response.json();
         
         if (data.success) {
-            resultDiv.innerHTML = `
-                <div class="success">
-                    <h3>${data.word}</h3>
-                    <p>${data.definition}</p>
-                </div>
-            `;
+            resultDiv.innerHTML = LANG.templates.successDiv(data.word, data.definition);
         } else {
-            resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+            resultDiv.innerHTML = LANG.templates.errorParagraph(data.error);
         }
     } catch (error) {
-        resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        resultDiv.innerHTML = LANG.templates.errorParagraph(LANG.genericError + error.message);
     }
 }
 
 // Add a new definition
 async function addDefinition() {
-    const word = document.getElementById('newWord').value.trim();
-    const definition = document.getElementById('newDefinition').value.trim();
-    const resultDiv = document.getElementById('addResult');
+    const word = document.getElementById(LANG.elementIds.newWord).value.trim();
+    const definition = document.getElementById(LANG.elementIds.newDefinition).value.trim();
+    const resultDiv = document.getElementById(LANG.elementIds.addResult);
     
     if (!word || !definition) {
-        resultDiv.innerHTML = '<p class="error">Please enter both word and definition</p>';
+        resultDiv.innerHTML = LANG.templates.errorParagraph(LANG.enterBothFieldsError);
         return;
     }
     
     try {
-        const response = await fetch(API_BASE_URL, {
-            method: 'POST',
+        const response = await fetch(LANG.apiBaseUrl, {
+            method: LANG.httpMethods.post,
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': LANG.contentType,
             },
             body: JSON.stringify({ word, definition })
         });
@@ -52,14 +45,14 @@ async function addDefinition() {
         const data = await response.json();
         
         if (data.success) {
-            resultDiv.innerHTML = `<p class="success">${data.message}</p>`;
-            document.getElementById('newWord').value = '';
-            document.getElementById('newDefinition').value = '';
+            resultDiv.innerHTML = LANG.templates.successParagraph(data.message);
+            document.getElementById(LANG.elementIds.newWord).value = '';
+            document.getElementById(LANG.elementIds.newDefinition).value = '';
         } else {
-            resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+            resultDiv.innerHTML = LANG.templates.errorParagraph(data.error);
         }
     } catch (error) {
-        resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        resultDiv.innerHTML = LANG.templates.errorParagraph(LANG.genericError + error.message);
     }
 }
 
@@ -67,43 +60,54 @@ async function addDefinition() {
 
 // Get all definitions
 async function getAllDefinitions() {
-    const resultDiv = document.getElementById('allDefinitions');
+    const resultDiv = document.getElementById(LANG.elementIds.allDefinitions);
     
     try {
-        const response = await fetch(API_BASE_URL);
+        const response = await fetch(LANG.apiBaseUrl);
         const data = await response.json();
         
         if (data.success) {
             const definitionsHtml = Object.entries(data.definitions)
-                .map(([word, definition]) => `
-                    <div class="definition-item">
-                        <strong>${word}:</strong> ${definition}
-                    </div>
-                `)
+                .map(([word, definition]) => LANG.templates.definitionItem(word, definition))
                 .join('');
             
-            resultDiv.innerHTML = `
-                <div class="success">
-                    <p>Total definitions: ${data.count}</p>
-                    ${definitionsHtml}
-                </div>
-            `;
+            resultDiv.innerHTML = LANG.templates.allDefinitionsSuccess(data.count, definitionsHtml);
         } else {
-            resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+            resultDiv.innerHTML = LANG.templates.errorParagraph(data.error);
         }
     } catch (error) {
-        resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        resultDiv.innerHTML = LANG.templates.errorParagraph(LANG.genericError + error.message);
     }
 }
 
-// Clear search input on Enter key
-document.getElementById('searchWord').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        searchWord();
-    }
-});
-
-// Load all definitions on page load
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize page content and event listeners
+function initializePage() {
+    // Set page content from language file
+    document.getElementById('pageTitle').textContent = LANG.pageTitle;
+    document.title = LANG.pageTitle;
+    document.getElementById('mainHeading').textContent = LANG.mainHeading;
+    document.getElementById('lookupHeading').textContent = LANG.lookupHeading;
+    document.getElementById('addDefinitionHeading').textContent = LANG.addDefinitionHeading;
+    document.getElementById('allDefinitionsHeading').textContent = LANG.allDefinitionsHeading;
+    document.getElementById('searchButton').textContent = LANG.searchButton;
+    document.getElementById('addButton').textContent = LANG.addButton;
+    document.getElementById('loadAllButton').textContent = LANG.loadAllButton;
+    
+    // Set placeholders
+    document.getElementById(LANG.elementIds.searchWord).placeholder = LANG.searchPlaceholder;
+    document.getElementById(LANG.elementIds.newWord).placeholder = LANG.wordPlaceholder;
+    document.getElementById(LANG.elementIds.newDefinition).placeholder = LANG.definitionPlaceholder;
+    
+    // Set up event listeners
+    document.getElementById(LANG.elementIds.searchWord).addEventListener(LANG.events.keypress, function(e) {
+        if (e.key === LANG.events.enter) {
+            searchWord();
+        }
+    });
+    
+    // Load all definitions on page load
     getAllDefinitions();
-});
+}
+
+// Initialize page when DOM is loaded
+document.addEventListener(LANG.events.domContentLoaded, initializePage);
