@@ -106,15 +106,21 @@ async function handleApi(req, res, parsedUrl){
 
     if (req.method === 'POST' && pathname === '/api/insert-sample'){
         try{
-            const name = 'Sample_' + Date.now();
-            const year = 1950 + Math.floor(Math.random()*60);
-            const month = 1 + Math.floor(Math.random()*12);
-            const day = 1 + Math.floor(Math.random()*28);
-            const birthdate = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-            const sql = `INSERT INTO patients (name,birthdate) VALUES (${escapeSql(name)}, ${escapeSql(birthdate)});`;
-            const r = await dbImpl.run(sql);
+            // Insert the fixed sample rows each time the endpoint is called
+            const samples = [
+                ['Sara Brown', '1901-01-01'],
+                ['John Smith', '1941-01-01'],
+                ['Jack Ma', '1961-01-30'],
+                ['Elon Musk', '1999-01-01']
+            ];
+            let lastID = null;
+            for (const [name, birthdate] of samples) {
+                const sql = `INSERT INTO patients (name,birthdate) VALUES (${escapeSql(name)}, ${escapeSql(birthdate)});`;
+                const r = await dbImpl.run(sql);
+                if (r && r.lastID) lastID = r.lastID;
+            }
             res.writeHead(200, {'Content-Type':'application/json'});
-            res.end(JSON.stringify({ success: true, name, birthdate, lastID: r.lastID }));
+            res.end(JSON.stringify({ success: true, inserted: samples.length, lastID }));
         }catch(err){
             res.writeHead(500, {'Content-Type':'application/json'});
             res.end(JSON.stringify({ success: false, error: err.message }));

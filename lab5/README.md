@@ -68,14 +68,33 @@ ALLOW_CREDENTIALS=false
 PORT=5001
 ```
 
-3. Start with `node server.js` and dotenv will load those values.
+   location /api/lab5/ {
+      # Hide any CORS headers returned by the upstream (Node) so we don't duplicate values
+      proxy_hide_header Access-Control-Allow-Origin;
+      proxy_hide_header Access-Control-Allow-Methods;
+      proxy_hide_header Access-Control-Allow-Headers;
+      proxy_hide_header Access-Control-Allow-Credentials;
 
-If you run the server behind Nginx, make sure Nginx proxies `/api/lab5/` to the Node server on the configured port (default 5001). Nginx can also inject CORS headers if you prefer to handle it at the proxy layer.
+      # CORS headers for all responses (Nginx will add them)
+      add_header 'Access-Control-Allow-Origin' 'https://lab5-nodesqlclient.netlify.app' always;
+      add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+      add_header 'Access-Control-Allow-Headers' 'Content-Type' always;
+      add_header 'Access-Control-Allow-Credentials' 'false' always;
 
-Notes
-- Queries are validated and only SELECT and INSERT are allowed. DROP/ALTER/UPDATE/DELETE/TRUNCATE are blocked.
-- If you host frontend separately, change endpoints in `lang.js` api paths to the backend domain (e.g. `https://api.example.com/api/query`).
-- The database file `lab5.db` will be created in the `lab5` folder.
+      # Handle preflight
+      if ($request_method = OPTIONS) {
+         # Optional: let the browser cache preflight
+         add_header 'Access-Control-Max-Age' 1728000;
+         return 204;
+      }
 
-Security
-- This is a simple lab/demo. Do not expose this to untrusted users without additional validation and authentication.
+      # Proxy to your Node backend (preserve original URI)
+      proxy_pass http://127.0.0.1:5001;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+
+      # Optional: adjust timeouts / buffering if needed
+      proxy_buffering off;
+   }
