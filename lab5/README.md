@@ -19,7 +19,11 @@ Run locally
 2. npm install
    - If you want to use `nodesql`, install it (optional): `npm i nodesql` (if available)
 3. npm start
-4. Open http://localhost:4001/index.html in your browser
+4. Open http://localhost:5001/index.html in your browser
+
+Environment variables
+- `ALLOWED_ORIGIN` - optional. Set to the full origin of the frontend (for example `https://your-site.netlify.app`) to restrict CORS. Defaults to `*` (allow all).
+- `ALLOW_CREDENTIALS` - optional. Set to `true` to send `Access-Control-Allow-Credentials: true`.
 
 Notes
 - Queries are validated and only SELECT and INSERT are allowed. DROP/ALTER/UPDATE/DELETE/TRUNCATE are blocked.

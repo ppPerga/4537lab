@@ -4,6 +4,10 @@ const url = require('url');
 const fs = require('fs');
 const path = require('path');
 
+// CORS configuration — set ALLOWED_ORIGIN to a specific origin to avoid using '*'
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+const ALLOW_CREDENTIALS = process.env.ALLOW_CREDENTIALS === 'true';
+
 let dbImpl = null;
 let usingNodesql = false;
 
@@ -82,10 +86,17 @@ function serveStatic(filePath, res){
 }
 
 async function handleApi(req, res, parsedUrl){
-    // CORS headers
-    res.setHeader('Access-Control-Allow-Origin','*');
+    // CORS headers - use configured origin
+    if (ALLOWED_ORIGIN === '*') {
+        res.setHeader('Access-Control-Allow-Origin','*');
+    } else {
+        res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
+        // advise caches that response varies by Origin
+        res.setHeader('Vary', 'Origin');
+    }
     res.setHeader('Access-Control-Allow-Methods','GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers','Content-Type');
+    if (ALLOW_CREDENTIALS) res.setHeader('Access-Control-Allow-Credentials','true');
     if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
     if (req.method === 'POST' && parsedUrl.pathname === '/api/insert-sample'){

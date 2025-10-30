@@ -17,10 +17,10 @@ const LANG = {
     missingQuery: "Please enter a SQL query",
     genericError: "Error: ",
 
-    // API endpoints (change to full backend URL if hosted separately)
+    // API endpoints (absolute backend URLs for production)
     api: {
-        insertSample: "/api/insert-sample",
-        query: "/api/query"
+        insertSample: "https://milescoda.xyz/api/lab5/insert-sample",
+        query: "https://milescoda.xyz/api/lab5/query"
     },
 
     // DOM element ids
