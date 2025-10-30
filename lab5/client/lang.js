@@ -1,0 +1,51 @@
+// Client-only language configuration for lab5
+const LANG = {
+    pageTitle: "Lab 5 - Nodesql Client",
+    mainHeading: "Lab 5: Nodesql Client/Server",
+
+    // Buttons and labels
+    insertSampleButton: "Insert Sample Row",
+    querySubmitButton: "Run Query",
+
+    // Placeholders and helpers
+    queryPlaceholder: "Enter a SQL query (SELECT or INSERT only)",
+
+    // Messages
+    insertSuccess: "Inserted sample row",
+    insertFailure: "Failed to insert sample row",
+    invalidQuery: "Query type not allowed. Only SELECT and INSERT queries are supported.",
+    missingQuery: "Please enter a SQL query",
+    genericError: "Error: ",
+
+    // API endpoints (production backend)
+    api: {
+        insertSample: "https://milescoda.xyz/api/lab5/insert-sample",
+        query: "https://milescoda.xyz/api/lab5/query"
+    },
+
+    // DOM element ids (client-only)
+    ids: {
+        insertSampleBtn: "insertSampleBtn",
+        queryTextarea: "queryTextarea",
+        querySubmitBtn: "querySubmitBtn",
+        insertResult: "insertResult",
+        queryResult: "queryResult",
+        pageTitle: "pageTitle",
+        mainHeading: "mainHeading"
+    },
+
+    // Templates
+    templates: {
+        errorParagraph: (msg) => `<p class="error">${msg}</p>`,
+        successParagraph: (msg) => `<p class="success">${msg}</p>`,
+        resultTable: (rows) => {
+            if (!rows || rows.length === 0) return '<p>No rows returned</p>';
+            const cols = Object.keys(rows[0]);
+            const header = '<tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr>';
+            const body = rows.map(r => '<tr>' + cols.map(c => `<td>${(r[c]===null? 'NULL': r[c])}</td>`).join('') + '</tr>').join('');
+            return `<table class="result-table">${header}${body}</table>`;
+        }
+    }
+};
+
+if (typeof module !== 'undefined' && module.exports) module.exports = LANG;

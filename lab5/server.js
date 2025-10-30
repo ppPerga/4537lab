@@ -4,8 +4,9 @@ const url = require('url');
 const fs = require('fs');
 const path = require('path');
 
-// CORS configuration — set ALLOWED_ORIGIN to a specific origin to avoid using '*'
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+// CORS configuration — default to your Netlify frontend origin for simplicity.
+// You can still override by setting the ALLOWED_ORIGIN environment variable.
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://lab5-nodesqlclient.netlify.app';
 const ALLOW_CREDENTIALS = process.env.ALLOW_CREDENTIALS === 'true';
 
 let dbImpl = null;
@@ -99,7 +100,11 @@ async function handleApi(req, res, parsedUrl){
     if (ALLOW_CREDENTIALS) res.setHeader('Access-Control-Allow-Credentials','true');
     if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
-    if (req.method === 'POST' && parsedUrl.pathname === '/api/insert-sample'){
+    // normalize paths: support both /api/... and /api/lab5/...
+    let pathname = parsedUrl.pathname || '/';
+    if (pathname.startsWith('/api/lab5')) pathname = pathname.replace(/^\/api\/lab5/, '/api');
+
+    if (req.method === 'POST' && pathname === '/api/insert-sample'){
         try{
             const name = 'Sample_' + Date.now();
             const year = 1950 + Math.floor(Math.random()*60);
@@ -117,7 +122,7 @@ async function handleApi(req, res, parsedUrl){
         return;
     }
 
-    if (parsedUrl.pathname === '/api/query'){
+    if (pathname === '/api/query'){
         if (req.method === 'GET'){
             const sql = parsedUrl.query.sql;
             if (!isAllowedSql(sql)) { res.writeHead(400, {'Content-Type':'application/json'}); res.end(JSON.stringify({ success:false, error:'Invalid or unsupported query' })); return; }
@@ -138,7 +143,7 @@ async function handleApi(req, res, parsedUrl){
             return;
         }
 
-        if (req.method === 'POST'){
+    if (req.method === 'POST'){
             // collect body
             let body = '';
             req.on('data', chunk => { body += chunk.toString(); });
